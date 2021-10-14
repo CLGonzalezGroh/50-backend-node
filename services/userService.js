@@ -9,7 +9,9 @@ class UserService {
   }
 
   async find() {
-    const users = await models.User.findAll();
+    const users = await models.User.findAll({
+      include: ['customer'],
+    });
 
     return users;
   }
@@ -34,7 +36,7 @@ class UserService {
     const user = await this.findOne(id);
     await user.destroy();
 
-    return { id };
+    return id;
   }
 }
 
