@@ -10,12 +10,14 @@ const {
 const router = express.Router();
 const service = new ProductsService();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   // const { size } = req.query;
-
-  const products = await service.find();
-
-  res.json(products);
+  try {
+    const products = await service.find();
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get(
@@ -48,9 +50,9 @@ router.patch(
   validatorHandler(getProductSchema, 'params'),
   validatorHandler(updateProductSchema, 'body'),
   async (req, res, next) => {
-    const body = req.body;
-    const { id } = req.params;
     try {
+      const body = req.body;
+      const { id } = req.params;
       const updatedProduct = await service.update(id, body);
       res.json(updatedProduct);
     } catch (error) {
@@ -59,14 +61,21 @@ router.patch(
   }
 );
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  const deletedId = await service.delete(id);
-
-  res.json({
-    message: 'deleted',
-    id: deletedId,
-  });
-});
+router.delete(
+  '/:id',
+  validatorHandler(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const deletedId = await service.delete(id);
+      res.status(201).json({
+        message: 'deleted',
+        id: deletedId,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;
