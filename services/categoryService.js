@@ -1,34 +1,29 @@
-const faker = require('faker');
+const { models } = require('../libs/sequelize');
 
 class CategoryService {
-  constructor() {
-    this.categories = [];
-    this.generate();
-  }
-  generate() {
-    const limit = 20;
+  constructor() {}
 
-    for (let index = 0; index < limit; index++) {
-      this.categories.push({
-        id: faker.datatype.uuid(),
-        name: faker.commerce.productMaterial(),
-      });
-    }
+  async create(data) {
+    const newCategory = await models.Category.create(data);
+
+    return newCategory;
   }
 
-  create() {}
-
-  find() {
-    return this.categories;
+  async find() {
+    const categories = await models.Category.findAll();
+    return categories;
   }
 
-  findOne(id) {
-    return this.categories.find((item) => item.id === id);
+  async findOne(id) {
+    const category = await models.Category.findByPk(id, {
+      include: ['products'],
+    });
+    return category;
   }
 
-  update() {}
+  async update() {}
 
-  delete() {}
+  async delete() {}
 }
 
 module.exports = CategoryService;
