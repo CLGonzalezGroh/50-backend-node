@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const passport = require('passport');
 
 const routerApi = require('./routes');
 const {
@@ -8,6 +9,7 @@ const {
   errorHandler,
   ormErrorHandler,
 } = require('./middlewares/errorHandlers');
+const { checkApiKeys } = require('./middlewares/authHandler');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,9 +28,16 @@ const options = {
 };
 app.use(cors(options));
 
+require('./utils/auth');
+
 app.get('/', (req, res) => {
   res.send('Hola mi server en express');
 });
+app.get('/protected', checkApiKeys, (req, res) => {
+  res.send('Ruta secreta');
+});
+
+app.use(passport.initialize());
 
 routerApi(app);
 
