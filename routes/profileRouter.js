@@ -2,13 +2,6 @@ const express = require('express');
 const passport = require('passport');
 
 const OrderService = require('../services/orderService');
-const { checkRoles } = require('../middlewares/authHandler');
-const validatorHandler = require('../middlewares/validatorHandler');
-const {
-  createCategorySchema,
-  updateCategorySchema,
-  getCategorySchema,
-} = require('./../schemas/categorySchema');
 
 const router = express.Router();
 const service = new OrderService();
